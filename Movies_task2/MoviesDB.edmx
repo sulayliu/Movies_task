@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="MoviesDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Movie">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MoviesDB.dbo.Rating' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MovieId" />
+            <PropertyRef Name="RatingNum" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="MovieId" Type="int" Nullable="false" />
+          <Property Name="RatingNum" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Age" Type="int" Nullable="false" />
+          <Property Name="Gender" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="occupation" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Rating_Movie">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="1" />
+          <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Movie">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="MovieId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rating_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="AllMoviesRatedByAUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="AverageRatingOfAllMovies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="AverageRatingOfAMovie" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="movieId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InserIntoRating" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="int" Mode="In" />
+          <Parameter Name="movieId" Type="int" Mode="In" />
+          <Parameter Name="RatingNum" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InsertIntoMovies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="movieId" Type="int" Mode="In" />
+          <Parameter Name="name" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="InsertIntoUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="int" Mode="In" />
+          <Parameter Name="age" Type="int" Mode="In" />
+          <Parameter Name="gender" Type="varchar" Mode="In" />
+          <Parameter Name="occupation" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="Top10AverageRatedMovie" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="TopAverageRatedMovie" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="WorstMovie" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="MoviesDBModelStoreContainer">
+          <EntitySet Name="Movie" EntityType="Self.Movie" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rating" EntityType="Self.Rating" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Rating].[UserId] AS [UserId], 
+    [Rating].[MovieId] AS [MovieId], 
+    [Rating].[RatingNum] AS [RatingNum]
+    FROM [dbo].[Rating] AS [Rating]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Rating_Movie" Association="Self.FK_Rating_Movie">
+            <End Role="Movie" EntitySet="Movie" />
+            <End Role="Rating" EntitySet="Rating" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rating_User" Association="Self.FK_Rating_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Rating" EntitySet="Rating" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MoviesDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Movie">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Ratings" Relationship="Self.FK_Rating_Movie" FromRole="Movie" ToRole="Rating" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Age" Type="Int32" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="occupation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Ratings" Relationship="Self.FK_Rating_User" FromRole="User" ToRole="Rating" />
+        </EntityType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MovieId" />
+            <PropertyRef Name="RatingNum" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="MovieId" Type="Int32" Nullable="false" />
+          <Property Name="RatingNum" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Movie" Relationship="Self.FK_Rating_Movie" FromRole="Rating" ToRole="Movie" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Rating_User" FromRole="Rating" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Rating_Movie">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="1" />
+          <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Movie">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="MovieId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rating_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MoviesDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Movies" EntityType="Self.Movie" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="Ratings" EntityType="Self.Rating" />
+          <AssociationSet Name="FK_Rating_Movie" Association="Self.FK_Rating_Movie">
+            <End Role="Movie" EntitySet="Movies" />
+            <End Role="Rating" EntitySet="Ratings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rating_User" Association="Self.FK_Rating_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Rating" EntitySet="Ratings" />
+          </AssociationSet>
+          <FunctionImport Name="AllMoviesRatedByAUser" ReturnType="Collection(String)">
+            <Parameter Name="userId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="AverageRatingOfAllMovies" ReturnType="Collection(MoviesDBModel.AverageRatingOfAllMovies_Result)" />
+          <FunctionImport Name="AverageRatingOfAMovie" ReturnType="Collection(Int32)">
+            <Parameter Name="movieId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="InserIntoRating">
+            <Parameter Name="userId" Mode="In" Type="Int32" />
+            <Parameter Name="movieId" Mode="In" Type="Int32" />
+            <Parameter Name="RatingNum" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIntoMovies">
+            <Parameter Name="movieId" Mode="In" Type="Int32" />
+            <Parameter Name="name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIntoUser">
+            <Parameter Name="userId" Mode="In" Type="Int32" />
+            <Parameter Name="age" Mode="In" Type="Int32" />
+            <Parameter Name="gender" Mode="In" Type="String" />
+            <Parameter Name="occupation" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="Top10AverageRatedMovie" ReturnType="Collection(String)" />
+          <FunctionImport Name="TopAverageRatedMovie" ReturnType="Collection(String)" />
+          <FunctionImport Name="WorstMovie" ReturnType="Collection(String)" />
+        </EntityContainer>
+        <ComplexType Name="AverageRatingOfAllMovies_Result">
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="avg_rating" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MoviesDBModelStoreContainer" CdmEntityContainer="MoviesDBEntities1">
+          <EntitySetMapping Name="Movies">
+            <EntityTypeMapping TypeName="MoviesDBModel.Movie">
+              <MappingFragment StoreEntitySet="Movie">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="MoviesDBModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="occupation" ColumnName="occupation" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ratings">
+            <EntityTypeMapping TypeName="MoviesDBModel.Rating">
+              <MappingFragment StoreEntitySet="Rating">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="MovieId" ColumnName="MovieId" />
+                <ScalarProperty Name="RatingNum" ColumnName="RatingNum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AllMoviesRatedByAUser" FunctionName="MoviesDBModel.Store.AllMoviesRatedByAUser" />
+          <FunctionImportMapping FunctionImportName="AverageRatingOfAllMovies" FunctionName="MoviesDBModel.Store.AverageRatingOfAllMovies">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MoviesDBModel.AverageRatingOfAllMovies_Result">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="avg_rating" ColumnName="avg_rating" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="AverageRatingOfAMovie" FunctionName="MoviesDBModel.Store.AverageRatingOfAMovie" />
+          <FunctionImportMapping FunctionImportName="InserIntoRating" FunctionName="MoviesDBModel.Store.InserIntoRating" />
+          <FunctionImportMapping FunctionImportName="InsertIntoMovies" FunctionName="MoviesDBModel.Store.InsertIntoMovies" />
+          <FunctionImportMapping FunctionImportName="InsertIntoUser" FunctionName="MoviesDBModel.Store.InsertIntoUser" />
+          <FunctionImportMapping FunctionImportName="Top10AverageRatedMovie" FunctionName="MoviesDBModel.Store.Top10AverageRatedMovie" />
+          <FunctionImportMapping FunctionImportName="TopAverageRatedMovie" FunctionName="MoviesDBModel.Store.TopAverageRatedMovie" />
+          <FunctionImportMapping FunctionImportName="WorstMovie" FunctionName="MoviesDBModel.Store.WorstMovie" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
